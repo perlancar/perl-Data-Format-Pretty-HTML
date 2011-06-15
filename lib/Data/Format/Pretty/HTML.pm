@@ -107,9 +107,7 @@ Differences with Data::Format::Pretty::Console:
 
 =over 4
 
-=item *
-
-=item *
+=item * hot (hash of table) structure is rendered as table of inner tables
 
 =back
 
