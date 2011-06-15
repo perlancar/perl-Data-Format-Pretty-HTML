@@ -1,5 +1,12 @@
 Revision history for Data-Format-Pretty-HTML
 
+0.02     2011-06-15
+
+         [BUG FIXES]
+
+         - Fix formatting for 'hot'.
+
+
 0.01     2011-06-15
 
          - First release.
