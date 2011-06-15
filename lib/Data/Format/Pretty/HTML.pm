@@ -125,6 +125,7 @@ use Log::Any '$log';
 use Data::Format::Pretty::Console;
 use HTML::Entities;
 use Scalar::Util qw(looks_like_number);
+use Text::ASCIITable;
 use URI::Find::Schemeless;
 use YAML::Any;
 
@@ -209,12 +210,18 @@ sub _render_table {
     push @t, "</tr>\n";
     for my $r (@{$t->{tbl_rows}}) {
         push @t, "  <tr>";
+        my $cidx = 0;
         for my $c (@$r) {
-            push @t, (
-                "<td", (looks_like_number($c) ? ' class="number"':''), ">",
-                $self->_htmlify($c),
-                "</td>",
-            );
+            if ($t->{html_cols} && $t->{html_cols}[$cidx]) {
+                push @t, "<td>", $c, "</td>";
+            } else {
+                push @t, (
+                    "<td", (looks_like_number($c) ? ' class="number"':''), ">",
+                    $self->_htmlify($c),
+                    "</td>",
+                );
+            }
+            $cidx++;
         }
         push @t, "</tr>\n";
     }
@@ -237,18 +244,15 @@ sub _format_scalar {
 
 sub _format_hot {
     my ($self, $data) = @_;
-    # show hot as paragraphs:
-    #
-    # key:
-    # value (table)
-    #
-    # key2:
-    # value ...
     my @t;
+    # format as 2-column table of key/value
+    my $t = Text::ASCIITable->new();
+    $t->setCols("key", "value");
+    $t->{html_cols} = [0, 1];
     for my $k (sort keys %$data) {
-        push @t, "$k:\n", $self->_format($data->{$k}), "\n";
+        $t->addRow($k, $self->_format($data->{$k}));
     }
-    return join("", @t);
+    $self->_render_table($t);
 }
 
 =head1 SEE ALSO

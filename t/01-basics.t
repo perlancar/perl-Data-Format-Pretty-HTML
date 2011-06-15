@@ -31,6 +31,13 @@ my @data = (
                           </table>!sx,
     },
 
+    # check hot rendered as table
+    {
+        data         => {table1=>[], table2=>[[1]]},
+        struct       => "hot",
+        output_re    => qr!<table>.+<table>!sx,
+    },
+
     # check linkify_urls_in_text
     {
         name         => 'opt linkify_urls_in_text',
