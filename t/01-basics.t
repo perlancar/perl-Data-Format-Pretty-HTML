@@ -25,7 +25,6 @@ my @data = (
         data         => [1, "a"],
         struct       => "list",
         output_re    => qr!<table>\s*
-                           <tr><th>data</th></tr>\s*
                            <tr><td\sclass="number">1</td></tr>\s*
                            <tr><td>a</td></tr>\s*
                           </table>!sx,
