@@ -1,5 +1,13 @@
 Revision history for Data-Format-Pretty-HTML
 
+0.03     2011-07-28
+
+         [ENHANCEMENTS]
+
+         - Update to Data::Format::Pretty::Console 0.10 (no header rows for
+           array, hash, aoa).
+
+
 0.02     2011-06-15
 
          [BUG FIXES]
