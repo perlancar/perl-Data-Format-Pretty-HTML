@@ -1,5 +1,122 @@
 package Data::Format::Pretty::HTML;
+use 5.010;
+use strict;
+use warnings;
+use Log::Any '$log';
+
+use Data::Format::Pretty::Console;
+use HTML::Entities;
+use Scalar::Util qw(looks_like_number);
+use Text::ASCIITable;
+use URI::Find::Schemeless;
+use YAML::Any;
+
+require Exporter;
+our @ISA = qw(Exporter Data::Format::Pretty::Console);
+our @EXPORT_OK = qw(format_pretty);
+
+# VERSION
+
+sub format_pretty {
+    my ($data, $opts) = @_;
+    $opts //= {};
+    __PACKAGE__->new($opts)->_format($data);
+}
+
+# OO interface is hidden
+sub new {
+    my ($class, $opts) = @_;
+    my $obj = $class->SUPER::new($opts);
+    #my $obj = Data::Format::Pretty::Console->new($opts);
+    $obj->{opts}{linkify_urls_in_text} //= 1;
+    $obj->{opts}{interactive} = 1;
+    #bless $class, $obj;
+    $obj;
+}
+
+sub _htmlify {
+    my ($self, $text) = @_;
+
+    $text = encode_entities($text);
+    if ($self->{opts}{linkify_urls_in_text}) {
+        URI::Find::Schemeless->new(
+            sub {
+                #my $uri = encode_entities $_[0];
+                #my $uri = $_[0];
+                my $uri = decode_entities $_[0];
+                return qq|<a href="$uri">$uri</a>|;
+            })->find(\$text);
+    }
+    if ($text =~ /\R/) {
+        return "<pre>$text</pre>";
+    } else {
+        return $text;
+    }
+}
+
+sub _render_table {
+    my ($self, $t) = @_;
+    my @t = ("<table>\n");
+
+    push @t, "  <tr>";
+    for my $c (@{$t->{tbl_cols}}) {
+        push @t, (
+            "<th", (looks_like_number($c) ? ' class="number"':''), ">",
+            $self->_htmlify($c),
+            "</th>",
+        );
+    }
+    push @t, "</tr>\n";
+    for my $r (@{$t->{tbl_rows}}) {
+        push @t, "  <tr>";
+        my $cidx = 0;
+        for my $c (@$r) {
+            if ($t->{html_cols} && $t->{html_cols}[$cidx]) {
+                push @t, "<td>", $c, "</td>";
+            } else {
+                push @t, (
+                    "<td", (looks_like_number($c) ? ' class="number"':''), ">",
+                    $self->_htmlify($c),
+                    "</td>",
+                );
+            }
+            $cidx++;
+        }
+        push @t, "</tr>\n";
+    }
+    push @t, "</table>\n";
+    join "", @t;
+}
+
+# format unknown structure, the default is to dump YAML structure
+sub _format_unknown {
+    my ($self, $data) = @_;
+    $self->_htmlify(Dump $data);
+}
+
+sub _format_scalar {
+    my ($self, $data) = @_;
+
+    my $sdata = defined($data) ? "$data" : "";
+    $self->_htmlify($sdata);
+}
+
+sub _format_hot {
+    my ($self, $data) = @_;
+    my @t;
+    # format as 2-column table of key/value
+    my $t = Text::ASCIITable->new();
+    $t->setCols("key", "value");
+    $t->{html_cols} = [0, 1];
+    for my $k (sort keys %$data) {
+        $t->addRow($k, $self->_format($data->{$k}));
+    }
+    $self->_render_table($t);
+}
+
+1;
 # ABSTRACT: Pretty-print data structure for HTML output
+__END__
 
 =head1 SYNOPSIS
 
@@ -113,23 +230,8 @@ Differences with Data::Format::Pretty::Console:
 
 This module uses L<Log::Any> for logging.
 
-=cut
 
-use 5.010;
-use strict;
-use warnings;
-use Log::Any '$log';
-
-use Data::Format::Pretty::Console;
-use HTML::Entities;
-use Scalar::Util qw(looks_like_number);
-use Text::ASCIITable;
-use URI::Find::Schemeless;
-use YAML::Any;
-
-require Exporter;
-our @ISA = qw(Exporter Data::Format::Pretty::Console);
-our @EXPORT_OK = qw(format_pretty);
+=for Pod::Coverage new
 
 =head1 FUNCTIONS
 
@@ -150,108 +252,6 @@ href="http://foo">http://foo</a>'. Default is true.
 
 =back
 
-=cut
-
-sub format_pretty {
-    my ($data, $opts) = @_;
-    $opts //= {};
-    __PACKAGE__->new($opts)->_format($data);
-}
-
-=for Pod::Coverage new
-
-=cut
-
-# OO interface is hidden
-sub new {
-    my ($class, $opts) = @_;
-    my $obj = $class->SUPER::new($opts);
-    #my $obj = Data::Format::Pretty::Console->new($opts);
-    $obj->{opts}{linkify_urls_in_text} //= 1;
-    $obj->{opts}{interactive} = 1;
-    #bless $class, $obj;
-    $obj;
-}
-
-sub _htmlify {
-    my ($self, $text) = @_;
-
-    $text = encode_entities($text);
-    if ($self->{opts}{linkify_urls_in_text}) {
-        URI::Find::Schemeless->new(
-            sub {
-                #my $uri = encode_entities $_[0];
-                #my $uri = $_[0];
-                my $uri = decode_entities $_[0];
-                return qq|<a href="$uri">$uri</a>|;
-            })->find(\$text);
-    }
-    if ($text =~ /\R/) {
-        return "<pre>$text</pre>";
-    } else {
-        return $text;
-    }
-}
-
-sub _render_table {
-    my ($self, $t) = @_;
-    my @t = ("<table>\n");
-
-    push @t, "  <tr>";
-    for my $c (@{$t->{tbl_cols}}) {
-        push @t, (
-            "<th", (looks_like_number($c) ? ' class="number"':''), ">",
-            $self->_htmlify($c),
-            "</th>",
-        );
-    }
-    push @t, "</tr>\n";
-    for my $r (@{$t->{tbl_rows}}) {
-        push @t, "  <tr>";
-        my $cidx = 0;
-        for my $c (@$r) {
-            if ($t->{html_cols} && $t->{html_cols}[$cidx]) {
-                push @t, "<td>", $c, "</td>";
-            } else {
-                push @t, (
-                    "<td", (looks_like_number($c) ? ' class="number"':''), ">",
-                    $self->_htmlify($c),
-                    "</td>",
-                );
-            }
-            $cidx++;
-        }
-        push @t, "</tr>\n";
-    }
-    push @t, "</table>\n";
-    join "", @t;
-}
-
-# format unknown structure, the default is to dump YAML structure
-sub _format_unknown {
-    my ($self, $data) = @_;
-    $self->_htmlify(Dump $data);
-}
-
-sub _format_scalar {
-    my ($self, $data) = @_;
-
-    my $sdata = defined($data) ? "$data" : "";
-    $self->_htmlify($sdata);
-}
-
-sub _format_hot {
-    my ($self, $data) = @_;
-    my @t;
-    # format as 2-column table of key/value
-    my $t = Text::ASCIITable->new();
-    $t->setCols("key", "value");
-    $t->{html_cols} = [0, 1];
-    for my $k (sort keys %$data) {
-        $t->addRow($k, $self->_format($data->{$k}));
-    }
-    $self->_render_table($t);
-}
 
 =head1 SEE ALSO
 
@@ -259,4 +259,3 @@ L<Data::Format::Pretty::Console>
 
 =cut
 
-1;
