@@ -58,15 +58,18 @@ sub _render_table {
     my ($self, $t) = @_;
     my @t = ("<table>\n");
 
-    push @t, "  <tr>";
-    for my $c (@{$t->{tbl_cols}}) {
-        push @t, (
-            "<th", (looks_like_number($c) ? ' class="number"':''), ">",
-            $self->_htmlify($c),
-            "</th>",
-        );
+    unless ($t->{options}{hide_HeadRow}) {
+        push @t, "  <tr>";
+        for my $c (@{$t->{tbl_cols}}) {
+            push @t, (
+                "<th", (looks_like_number($c) ? ' class="number"':''), ">",
+                $self->_htmlify($c),
+                "</th>",
+            );
+        }
+        push @t, "</tr>\n";
     }
-    push @t, "</tr>\n";
+
     for my $r (@{$t->{tbl_rows}}) {
         push @t, "  <tr>";
         my $cidx = 0;
