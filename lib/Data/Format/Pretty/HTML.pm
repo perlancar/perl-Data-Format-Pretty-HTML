@@ -258,7 +258,7 @@ href="http://foo">http://foo</a>'. Default is true.
 
 =head1 SEE ALSO
 
-L<Data::Format::Pretty::Console>
+L<Data::Format::Pretty>
 
 =cut
 
