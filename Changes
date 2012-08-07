@@ -1,11 +1,17 @@
 Revision history for Data-Format-Pretty-HTML
 
-0.04     2012-03-29
+0.05     2012-08-07 (SHARYANTO)
+
+         No functional changes. Remove circular dependency on
+         Data::Format::Pretty [RT#78781]. Thanks, MITHALDU.
+
+
+0.04     2012-03-29 (SHARYANTO)
 
          Add content_type().
 
 
-0.03     2011-07-28
+0.03     2011-07-28 (SHARYANTO)
 
          [ENHANCEMENTS]
 
@@ -13,13 +19,13 @@ Revision history for Data-Format-Pretty-HTML
            array, hash, aoa).
 
 
-0.02     2011-06-15
+0.02     2011-06-15 (SHARYANTO)
 
          [BUG FIXES]
 
          - Fix formatting for 'hot'.
 
 
-0.01     2011-06-15
+0.01     2011-06-15 (SHARYANTO)
 
          - First release.
