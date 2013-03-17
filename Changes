@@ -1,5 +1,11 @@
 Revision history for Data-Format-Pretty-HTML
 
+0.06     2013-03-17 (SHARYANTO)
+
+         No functional changes. Fix bug [RT#83989] (broken by
+         Data::Format::Pretty::Console 0.21). Thanks, Andreas.
+
+
 0.05     2012-08-07 (SHARYANTO)
 
          No functional changes. Remove circular dependency on
