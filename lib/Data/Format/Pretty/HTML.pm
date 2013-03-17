@@ -4,10 +4,9 @@ use strict;
 use warnings;
 use Log::Any '$log';
 
-use Data::Format::Pretty::Console;
+use Data::Format::Pretty::Console 0.21;
 use HTML::Entities;
 use Scalar::Util qw(looks_like_number);
-use Text::ASCIITable;
 use URI::Find::Schemeless;
 use YAML::Any;
 
@@ -60,9 +59,9 @@ sub _render_table {
     my ($self, $t) = @_;
     my @t = ("<table>\n");
 
-    unless ($t->{options}{hide_HeadRow}) {
+    unless ($t->{at_opts}{hide_HeadRow}) {
         push @t, "  <tr>";
-        for my $c (@{$t->{tbl_cols}}) {
+        for my $c (@{$t->{cols}}) {
             push @t, (
                 "<th", (looks_like_number($c) ? ' class="number"':''), ">",
                 $self->_htmlify($c),
@@ -72,7 +71,7 @@ sub _render_table {
         push @t, "</tr>\n";
     }
 
-    for my $r (@{$t->{tbl_rows}}) {
+    for my $r (@{$t->{rows}}) {
         push @t, "  <tr>";
         my $cidx = 0;
         for my $c (@$r) {
@@ -110,11 +109,9 @@ sub _format_hot {
     my ($self, $data) = @_;
     my @t;
     # format as 2-column table of key/value
-    my $t = Text::ASCIITable->new();
-    $t->setCols("key", "value");
-    $t->{html_cols} = [0, 1];
+    my $t = {cols=>[qw/key value/], html_cols=>[0, 1], rows=>[]};
     for my $k (sort keys %$data) {
-        $t->addRow($k, $self->_format($data->{$k}));
+        push @{ $t->{rows} }, [$k, $self->_format($data->{$k})];
     }
     $self->_render_table($t);
 }
