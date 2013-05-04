@@ -1,5 +1,10 @@
 Revision history for Data-Format-Pretty-HTML
 
+0.07     2013-05-04 (SHARYANTO)
+
+         No functional changes. Adjust to Data::Format::Pretty::Console 0.24.
+
+
 0.06     2013-03-17 (SHARYANTO)
 
          No functional changes. Fix bug [RT#83989] (broken by

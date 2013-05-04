@@ -5,7 +5,7 @@ use strict;
 use warnings;
 use Log::Any '$log';
 
-use Data::Format::Pretty::Console 0.21;
+use Data::Format::Pretty::Console 0.24;
 use HTML::Entities;
 use Scalar::Util qw(looks_like_number);
 use URI::Find::Schemeless;
