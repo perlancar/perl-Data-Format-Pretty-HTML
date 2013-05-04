@@ -60,7 +60,8 @@ sub _render_table {
     my ($self, $t) = @_;
     my @t = ("<table>\n");
 
-    unless ($t->{at_opts}{hide_HeadRow}) {
+    my $sh = $t->{at_opts}{show_header};
+    unless (defined($sh) && !$sh) {
         push @t, "  <tr>";
         for my $c (@{$t->{cols}}) {
             push @t, (

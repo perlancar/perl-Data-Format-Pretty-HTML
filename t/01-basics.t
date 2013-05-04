@@ -1,8 +1,12 @@
-#!perl -Tw
+#!perl
+
+use 5.010;
 use strict;
-use Test::More;
+use warnings;
+
 use Data::Dump::Partial qw(dumpp);
 use Data::Format::Pretty::HTML qw(format_pretty);
+use Test::More 0.98;
 use YAML::Any;
 
 my @data = (
