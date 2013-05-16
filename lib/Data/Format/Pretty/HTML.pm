@@ -32,6 +32,7 @@ sub new {
     #my $obj = Data::Format::Pretty::Console->new($opts);
     $obj->{opts}{linkify_urls_in_text} //= 1;
     $obj->{opts}{interactive} = 1;
+    $obj->{opts}{list_max_columns} = 1;
     #bless $class, $obj;
     $obj;
 }
