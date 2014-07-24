@@ -29,8 +29,10 @@ my @data = (
         data         => [1, "a"],
         struct       => "list",
         output_re    => qr!<table>\s*
+                           <tbody>\s*
                            <tr><td\sclass="number">1</td></tr>\s*
                            <tr><td>a</td></tr>\s*
+                          </tbody>\s*
                           </table>!sx,
     },
 

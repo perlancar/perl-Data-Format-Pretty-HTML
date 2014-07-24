@@ -63,7 +63,8 @@ sub _render_table {
 
     my $sh = $t->{at_opts}{show_header};
     unless (defined($sh) && !$sh) {
-        push @t, "  <tr>";
+        push @t, "  <thead>\n";
+        push @t, "    <tr>";
         for my $c (@{$t->{cols}}) {
             push @t, (
                 "<th", (looks_like_number($c) ? ' class="number"':''), ">",
@@ -72,10 +73,12 @@ sub _render_table {
             );
         }
         push @t, "</tr>\n";
+        push @t, "  </thead>\n";
     }
 
+    push @t, "  <tbody>\n";
     for my $r (@{$t->{rows}}) {
-        push @t, "  <tr>";
+        push @t, "    <tr>";
         my $cidx = 0;
         for my $c (@$r) {
             if ($t->{html_cols} && $t->{html_cols}[$cidx]) {
@@ -91,6 +94,7 @@ sub _render_table {
         }
         push @t, "</tr>\n";
     }
+    push @t, "  </tbody>\n";
     push @t, "</table>\n";
     join "", @t;
 }
