@@ -237,8 +237,6 @@ Differences with Data::Format::Pretty::Console:
 
 =back
 
-This module uses L<Log::Any> for logging.
-
 
 =for Pod::Coverage new
 
@@ -267,4 +265,3 @@ href="http://foo">http://foo</a>'. Default is true.
 L<Data::Format::Pretty>
 
 =cut
-
