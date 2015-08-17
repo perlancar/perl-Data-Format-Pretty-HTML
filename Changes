@@ -1,5 +1,12 @@
 Revision history for Data-Format-Pretty-HTML
 
+0.10    2015-08-17 (PERLANCAR)
+
+	- No functional changes.
+
+	- Switch from Log::Any to Log::Any::IfLOG.
+
+
 0.09     2014-07-24 (SHARYANTO)
 
          - Generate <tbody> and <thead> element in tables.
